@@ -3,7 +3,9 @@ local MAX_SPEED = 10
 local opts = {
     { "Text", STRING, "EdgeTX" }, -- Text input option with a default value
     { "TextColor", COLOR, COLOR_THEME_SECONDARY1 }, -- Adjustable text color
-    { "Speed", VALUE, 5, 0, MAX_SPEED } -- Adjustable speed
+    { "Speed", VALUE, 5, 0, MAX_SPEED }, -- Adjustable speed
+    { "Shadow", BOOL, 1 }, -- Make text shadowed
+    { "LargeFont", BOOL, 0 }, -- Make text larger
 }
 
 TGUY = assert(loadScript("/SCRIPTS/TGUYCommon.lua"), "/SCRIPTS/TGUYCommon.lua is missing!")()
@@ -44,11 +46,13 @@ local function refresh(widget)
 
     -- Determine font size and color
     local color = widget.options.TextColor
-
+    local shadow = (widget.options.Shadow == 1 and SHADOWED) or 0
+    local font_size = (widget.options.LargeFont == 1 and MIDSIZE) or 0
     local zone = widget.zone
 
-    lcd.drawRectangle(0, 0, zone.w, zone.h, COLOR_THEME_PRIMARY3)
-    lcd.drawText(0, 0, widget.tgGeneratedStr, color)
+    lcd.drawRectangle(widget.zone.x, widget.zone.y, zone.w, zone.h, COLOR_THEME_PRIMARY3)
+    lcd.setColor(CUSTOM_COLOR, color)
+    lcd.drawText(widget.zone.x, widget.zone.y, widget.tgGeneratedStr, LEFT + CUSTOM_COLOR + font_size + shadow)
 end
 
 return { name = "TGUY", options = opts, create = create, update = update, refresh = refresh }
